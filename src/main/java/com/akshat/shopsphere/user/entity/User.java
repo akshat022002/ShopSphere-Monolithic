@@ -1,5 +1,6 @@
 package com.akshat.shopsphere.user.entity;
 
+import com.akshat.shopsphere.user.enums.AuthProvider;
 import com.akshat.shopsphere.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;

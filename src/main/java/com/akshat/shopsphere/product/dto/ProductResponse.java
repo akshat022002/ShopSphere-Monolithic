@@ -1,7 +1,5 @@
 package com.akshat.shopsphere.product.dto;
 
-import com.akshat.shopsphere.user.entity.User;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,6 +11,8 @@ public record ProductResponse(
     boolean active,
     String sku,
     Long sellerId,
+    Long categoryId,
+    Long subcategoryId,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 

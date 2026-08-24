@@ -1,6 +1,6 @@
 package com.akshat.shopsphere.security.oauth2;
 
-import com.akshat.shopsphere.user.entity.AuthProvider;
+import com.akshat.shopsphere.user.enums.AuthProvider;
 import com.akshat.shopsphere.user.entity.User;
 import com.akshat.shopsphere.user.enums.Role;
 import com.akshat.shopsphere.user.repository.UserRepository;

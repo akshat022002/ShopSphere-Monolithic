@@ -3,11 +3,14 @@ package com.akshat.shopsphere.product.controller;
 import com.akshat.shopsphere.common.response.ApiResponse;
 import com.akshat.shopsphere.product.dto.ProductCreateRequest;
 import com.akshat.shopsphere.product.dto.ProductResponse;
+import com.akshat.shopsphere.product.dto.ProductSearchRequest;
 import com.akshat.shopsphere.product.dto.ProductUpdateRequest;
 import com.akshat.shopsphere.product.service.ProductService;
 import com.akshat.shopsphere.security.userdetails.UserDetailsImplementation;
+import com.cloudinary.Api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +27,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductCreateRequest request
                                                                         ,Authentication authentication){
 
@@ -97,6 +100,19 @@ public class ProductController {
 
         return ResponseEntity.ok(apiResponse);
 
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('SELLER','ADMIN','CUSTOMER')")
+    public ResponseEntity<ApiResponse<Page<ProductResponse>>> searchProducts(@Valid ProductSearchRequest request){
+
+        Page<ProductResponse> response = productService.searchProducts(request);
+
+        ApiResponse<Page<ProductResponse>> apiResponse = new ApiResponse<>(true,
+                "Products fetched successfully",
+                response,LocalDateTime.now());
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     private UserDetailsImplementation getAuthenticatedUser(Authentication authentication){

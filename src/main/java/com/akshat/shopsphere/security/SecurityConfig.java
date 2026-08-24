@@ -7,6 +7,7 @@ import com.akshat.shopsphere.security.oauth2.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -41,6 +42,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**","/swagger-ui/**","/v3/api-docs/**")
                         .permitAll()
 
+                        .requestMatchers(HttpMethod.POST,"/api/categories","/api/categories/*/subcategories").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PATCH,"/api/categories/*","/api/categories/subcategories/*").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,"/api/categories/*","/api/categories/subcategories/*").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,"/api/categories/**").authenticated()
 
                         .anyRequest()
                         .authenticated())

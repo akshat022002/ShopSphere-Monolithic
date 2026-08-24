@@ -1,5 +1,7 @@
 package com.akshat.shopsphere.product.entity;
 
+import com.akshat.shopsphere.category.entity.Category;
+import com.akshat.shopsphere.category.entity.Subcategory;
 import com.akshat.shopsphere.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +26,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false,length = 150)
     private String name;
@@ -54,6 +56,14 @@ public class Product {
     @Column(nullable = false)
     @Builder.Default
     private LocalDateTime updatedAt=LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id",nullable = false)
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id",nullable = false)
+    private Subcategory subcategory;
 
     @PreUpdate
     protected void onUpdate(){

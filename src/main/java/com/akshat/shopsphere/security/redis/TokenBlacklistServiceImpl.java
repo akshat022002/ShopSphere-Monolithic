@@ -20,8 +20,6 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService{
     @Override
     public void BlacklistToken(String token) {
 
-
-
         Date expiration = jwtService.extractExpiration(token);
 
         long ttl = expiration.getTime()- System.currentTimeMillis();
