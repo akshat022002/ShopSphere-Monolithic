@@ -1,6 +1,7 @@
 package com.akshat.shopsphere.common.exception;
 
 import com.akshat.shopsphere.common.response.ApiResponse;
+import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex){
 
         ApiResponse<Void> response = new ApiResponse<>(false,
-                                                                ex.getMessage(),
-                                                           null,
-                                                                LocalDateTime.now()
+                ex.getMessage(),
+                null,
+                LocalDateTime.now()
                 );
 
     return ResponseEntity
@@ -36,10 +37,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDuplicateResource(DuplicateResourceException ex){
 
         ApiResponse<Void> response = new ApiResponse<>(false,
-                                                                ex.getMessage(),
-                                                           null,
-                                                                LocalDateTime.now()
-                                                        );
+                ex.getMessage(),
+                null,
+                LocalDateTime.now());
+
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(response);
@@ -90,6 +91,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(OptimisticLockException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOptimisticLock(OptimisticLockException ex){
+
+        ApiResponse<Void> response = new ApiResponse<>(false,
+                "Product stock was updated by another request. Please try again later",
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(response);
+
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex){
 
@@ -103,5 +118,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
     }
+
+
 
 }

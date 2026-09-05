@@ -30,11 +30,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(Authentication authentication){
+    public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(@RequestParam(name = "couponCode",required = false) String couponCode,
+                                                                     Authentication authentication){
 
         UserDetailsImplementation userDetails=getAuthenticatedUser(authentication);
 
-        OrderResponse response = orderService.placeOrder(userDetails.getId());
+        OrderResponse response = orderService.placeOrder(userDetails.getId(),couponCode);
 
         ApiResponse<OrderResponse> apiResponse = new ApiResponse<>(true,
                 "Order placed successfully",

@@ -65,6 +65,13 @@ public class Product {
     @JoinColumn(name = "subcategory_id",nullable = false)
     private Subcategory subcategory;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer stockQuantity=0;
+
+    @Version
+    private Long version;
+
     @PreUpdate
     protected void onUpdate(){
         updatedAt=LocalDateTime.now();

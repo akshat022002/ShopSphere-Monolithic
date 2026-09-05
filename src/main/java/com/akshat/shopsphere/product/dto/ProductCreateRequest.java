@@ -1,9 +1,6 @@
 package com.akshat.shopsphere.product.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 
 import java.math.BigDecimal;
@@ -32,6 +29,9 @@ public record ProductCreateRequest(
         @NotNull(message = "Subcategory ID is required")
         Long subcategoryId
 
+//        @NotNull(message = "Stock quantity is required")
+//        @Min(value = 0,message = "Stock quantity cannot be negative")
+//        Integer stockQuantity
 
 ) {
 

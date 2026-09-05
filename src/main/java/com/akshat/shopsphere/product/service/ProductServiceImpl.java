@@ -1,5 +1,8 @@
 package com.akshat.shopsphere.product.service;
 
+import com.akshat.shopsphere.audit.annotation.Audit;
+import com.akshat.shopsphere.audit.enums.AuditAction;
+import com.akshat.shopsphere.audit.enums.AuditEntityType;
 import com.akshat.shopsphere.category.entity.Category;
 import com.akshat.shopsphere.category.entity.Subcategory;
 import com.akshat.shopsphere.category.repository.CategoryRepository;
@@ -17,9 +20,10 @@ import com.akshat.shopsphere.product.specification.ProductSpecification;
 import com.akshat.shopsphere.user.entity.User;
 import com.akshat.shopsphere.user.enums.Role;
 import com.akshat.shopsphere.user.repository.UserRepository;
-import io.lettuce.core.search.arguments.AggregateArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +48,8 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final SubcategoryRepository subcategoryRepository;
 
+    @Audit(action = AuditAction.PRODUCT_CREATED,entityType = AuditEntityType.PRODUCT)
+    @CacheEvict(value = "product-search",allEntries = true)
     @Override
     public ProductResponse createProduct(ProductCreateRequest request, Long userId) {
 
@@ -99,6 +105,8 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+
+    @Cacheable(value = "products", key = "#productId")
     @Transactional(readOnly = true)
     @Override
     public ProductResponse getProductById(Long productId) {
@@ -113,6 +121,11 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(product);
     }
 
+
+    @Audit(action = AuditAction.PRODUCT_UPDATED,
+            entityType = AuditEntityType.PRODUCT,
+            entityIdParam = "productId")
+    @CacheEvict(value = "product-search",allEntries = true)
     @Override
     public ProductResponse updateProduct(Long productId, Long userId, ProductUpdateRequest request, Role role)  {
 
@@ -150,6 +163,11 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(updatedProduct);
     }
 
+    @Audit(action = AuditAction.PRODUCT_DELETED,
+            entityType = AuditEntityType.PRODUCT,
+            entityIdParam = "productId"
+    )
+    @CacheEvict(value = "product-search",allEntries = true)
     @Override
     public void deleteProduct(Long productId, Long userId,Role role)  {
 
@@ -174,6 +192,9 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Cacheable(value = "product-search",
+            key = "#request.page() + '-' + #request.size() + '-' + #request.sortBy() + '-' + #request.sortDir() + '-' + #request.name() + '-' + #request.categoryId() + '-' + #request.subcategoryId() + '-' + #request.minPrice() + '-' + #request.maxPrice()"
+    )
     @Override
     @Transactional(readOnly = true)
     public Page<ProductResponse> searchProducts(ProductSearchRequest request) {

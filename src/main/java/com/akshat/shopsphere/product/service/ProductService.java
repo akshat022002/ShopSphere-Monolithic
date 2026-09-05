@@ -1,5 +1,8 @@
 package com.akshat.shopsphere.product.service;
 
+import com.akshat.shopsphere.audit.annotation.Audit;
+import com.akshat.shopsphere.audit.enums.AuditAction;
+import com.akshat.shopsphere.audit.enums.AuditEntityType;
 import com.akshat.shopsphere.product.dto.ProductCreateRequest;
 import com.akshat.shopsphere.product.dto.ProductResponse;
 import com.akshat.shopsphere.product.dto.ProductSearchRequest;
@@ -10,6 +13,8 @@ import org.springframework.data.domain.Page;
 import java.nio.file.AccessDeniedException;
 
 public interface ProductService {
+
+
 
     ProductResponse createProduct(ProductCreateRequest request , Long sellerId);
 

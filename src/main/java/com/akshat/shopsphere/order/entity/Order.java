@@ -52,6 +52,16 @@ public class Order {
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
+    @Column(nullable = false, precision = 12, scale = 2)
+    @Builder.Default                //Added in discount module
+    private BigDecimal discount = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 12, scale = 2) //Added in discount module
+    private BigDecimal subtotal;
+
+    @Column(length = 20) //Added in discount module
+    private String couponCode;
+
     @PreUpdate
     public void onUpdate(){
         updatedAt=LocalDateTime.now();
