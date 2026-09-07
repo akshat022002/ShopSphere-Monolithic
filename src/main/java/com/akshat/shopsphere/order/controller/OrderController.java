@@ -1,10 +1,13 @@
 package com.akshat.shopsphere.order.controller;
 
 import com.akshat.shopsphere.common.response.ApiResponse;
+import com.akshat.shopsphere.common.security.CurrentUserProvider;
 import com.akshat.shopsphere.order.dto.OrderResponse;
 import com.akshat.shopsphere.order.dto.OrderSummaryResponse;
+import com.akshat.shopsphere.order.dto.UpdateOrderStatusRequest;
 import com.akshat.shopsphere.order.service.OrderService;
 import com.akshat.shopsphere.security.userdetails.UserDetailsImplementation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +31,16 @@ import java.time.LocalDateTime;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(@RequestParam(name = "couponCode",required = false) String couponCode,
                                                                      Authentication authentication){
 
-        UserDetailsImplementation userDetails=getAuthenticatedUser(authentication);
 
-        OrderResponse response = orderService.placeOrder(userDetails.getId(),couponCode);
+
+        OrderResponse response = orderService
+                .placeOrder(currentUserProvider.getUserId(authentication), couponCode);
 
         ApiResponse<OrderResponse> apiResponse = new ApiResponse<>(true,
                 "Order placed successfully",
@@ -49,9 +54,8 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable Long orderId,
                                                                    Authentication authentication){
 
-        UserDetailsImplementation userDetails=getAuthenticatedUser(authentication);
 
-        OrderResponse response = orderService.getOrderById(userDetails.getId(),orderId);
+        OrderResponse response = orderService.getOrderById(currentUserProvider.getUserId(authentication), orderId);
 
         ApiResponse<OrderResponse> apiResponse = new ApiResponse<>(true,
                 "Order fetched successfully",
@@ -71,11 +75,10 @@ public class OrderController {
                                                                                Authentication authentication
                                                                                ){
 
-        UserDetailsImplementation userDetails=getAuthenticatedUser(authentication);
-
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"createdAt"));
 
-        Page<OrderSummaryResponse> response = orderService.getMyOrders(userDetails.getId(),pageable);
+        Page<OrderSummaryResponse> response = orderService
+                .getMyOrders(currentUserProvider.getUserId(authentication),pageable);
 
         ApiResponse<Page<OrderSummaryResponse>> apiResponse = new ApiResponse<>(true,
                 "Orders fetched successfully",
@@ -90,9 +93,8 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(@PathVariable Long orderId,
                                                                   Authentication authentication){
 
-        UserDetailsImplementation userDetails=getAuthenticatedUser(authentication);
 
-        OrderResponse response = orderService.cancelOrder(userDetails.getId(),orderId);
+        OrderResponse response = orderService.cancelOrder(currentUserProvider.getUserId(authentication), orderId);
 
         ApiResponse<OrderResponse> apiResponse = new ApiResponse<>(true,
                 "Order cancelled successfully",
@@ -102,12 +104,21 @@ public class OrderController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @PatchMapping("{orderId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> updateStatus(@RequestBody @Valid UpdateOrderStatusRequest request,
+                                                          @PathVariable Long orderId){
 
+        orderService.updateOrderStatus(orderId,request.status());
 
+        ApiResponse<Void> apiResponse = new ApiResponse<>(true,
+                "Order status updated successfully",
+                null,
+                LocalDateTime.now()
+                );
 
+        return ResponseEntity.ok(apiResponse);
 
-
-    private UserDetailsImplementation getAuthenticatedUser(Authentication authentication){
-        return (UserDetailsImplementation) authentication.getPrincipal();
     }
+
 }

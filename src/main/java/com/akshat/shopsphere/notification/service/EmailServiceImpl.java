@@ -1,5 +1,6 @@
 package com.akshat.shopsphere.notification.service;
 
+import com.akshat.shopsphere.order.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
@@ -114,6 +115,23 @@ public class EmailServiceImpl implements EmailService{
             Regards,
             ShopSphere Team
             """.formatted(orderId);
+
+        sendEmail(to,subject,body);
+    }
+
+    @Override
+    public void sendOrderStatusUpdateEmail(String to, Long orderId, OrderStatus status) {
+        String subject = "ShopSphere - Order Status Updated";
+
+        String body = """
+                Hello,
+                
+                Your order with order id  %d has been updated.
+                
+                Current status: %s.
+                
+                Thank you for shopping with ShopSphere.
+                """.formatted(orderId,status);
 
         sendEmail(to,subject,body);
     }

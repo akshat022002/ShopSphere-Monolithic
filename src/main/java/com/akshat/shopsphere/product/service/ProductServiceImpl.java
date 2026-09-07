@@ -9,10 +9,7 @@ import com.akshat.shopsphere.category.repository.CategoryRepository;
 import com.akshat.shopsphere.category.repository.SubcategoryRepository;
 import com.akshat.shopsphere.common.exception.DuplicateResourceException;
 import com.akshat.shopsphere.common.exception.ResourceNotFoundException;
-import com.akshat.shopsphere.product.dto.ProductCreateRequest;
-import com.akshat.shopsphere.product.dto.ProductResponse;
-import com.akshat.shopsphere.product.dto.ProductSearchRequest;
-import com.akshat.shopsphere.product.dto.ProductUpdateRequest;
+import com.akshat.shopsphere.product.dto.*;
 import com.akshat.shopsphere.product.entity.Product;
 import com.akshat.shopsphere.product.mapper.ProductMapper;
 import com.akshat.shopsphere.product.repository.ProductRepository;
@@ -197,7 +194,7 @@ public class ProductServiceImpl implements ProductService {
     )
     @Override
     @Transactional(readOnly = true)
-    public Page<ProductResponse> searchProducts(ProductSearchRequest request) {
+    public ProductSearchResponse searchProducts(ProductSearchRequest request) {
 
         int page = request.page()!=null ? request.page() : 0;
 
@@ -219,7 +216,10 @@ public class ProductServiceImpl implements ProductService {
                 request.minPrice(),
                 request.maxPrice());
 
-        return productRepository.findAll(specification,pageable).map(productMapper::toResponse);
+        Page<ProductResponse> result =  productRepository
+                .findAll(specification,pageable).map(productMapper::toResponse);
+
+        return new ProductSearchResponse(result.getContent(),result.getNumber(),result.getSize());
 
     }
 }

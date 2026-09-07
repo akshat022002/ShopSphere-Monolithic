@@ -1,5 +1,7 @@
 package com.akshat.shopsphere.notification.service;
 
+import com.akshat.shopsphere.order.enums.OrderStatus;
+
 import java.math.BigDecimal;
 
 public interface EmailService {
@@ -13,4 +15,6 @@ public interface EmailService {
      void sendPaymentFailureEmail(String to ,Long orderId, BigDecimal amount);
 
      void sendOrderCancellationEmail(String to,Long orderId);
+
+     void sendOrderStatusUpdateEmail(String to, Long orderId, OrderStatus status);
 }

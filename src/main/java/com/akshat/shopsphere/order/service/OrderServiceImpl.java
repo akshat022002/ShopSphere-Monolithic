@@ -6,6 +6,7 @@ import com.akshat.shopsphere.audit.enums.AuditEntityType;
 import com.akshat.shopsphere.cart.entity.Cart;
 import com.akshat.shopsphere.cart.entity.CartItem;
 import com.akshat.shopsphere.cart.repository.CartRepository;
+import com.akshat.shopsphere.common.exception.BadRequestException;
 import com.akshat.shopsphere.common.exception.ResourceNotFoundException;
 import com.akshat.shopsphere.coupon.service.CouponService;
 import com.akshat.shopsphere.inventory.service.InventoryService;
@@ -153,7 +154,7 @@ public class OrderServiceImpl implements OrderService{
                         ,order.getCreatedAt()));
     }
 
-    @Audit(action = AuditAction.ORDER_CREATED,entityType = AuditEntityType.ORDER,entityIdParam = "orderId")
+    @Audit(action = AuditAction.ORDER_CANCELLED,entityType = AuditEntityType.ORDER,entityIdParam = "orderId")
     @Override
     public OrderResponse cancelOrder(Long userId,Long orderId) {
 
@@ -180,6 +181,46 @@ public class OrderServiceImpl implements OrderService{
     }
 
     return buildOrderResponse(order);
+
+    }
+
+    // Added in Production hardening module
+    @Audit(action = AuditAction.ORDER_STATUS_UPDATED,entityType = AuditEntityType.ORDER,entityIdParam = "orderId")
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus newStatus) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()->new ResourceNotFoundException("Order not found with id : "+orderId));
+
+        OrderStatus currentStatus = order.getStatus();
+
+        if(!isTransitionValid(currentStatus,newStatus)){
+            throw new BadRequestException("Order cannot transition from "+ currentStatus+" to "+newStatus);
+        }
+
+        order.setStatus(newStatus);
+
+        try {
+            emailService.sendOrderStatusUpdateEmail(order.getUser().getEmail(),orderId,newStatus);
+        } catch (Exception e){
+            log.error("Failed to send order status email for orderId : {}",orderId,e);
+        }
+    }
+
+    private boolean isTransitionValid(OrderStatus current,OrderStatus next){
+
+       return switch(current){
+
+           case PENDING -> next==OrderStatus.CANCELLED;
+
+           case CONFIRMED -> next==OrderStatus.PROCESSING || next==OrderStatus.CANCELLED;
+
+           case PROCESSING -> next==OrderStatus.SHIPPED || next==OrderStatus.CANCELLED;
+
+           case SHIPPED -> next==OrderStatus.DELIVERED;
+
+           case DELIVERED,CANCELLED -> false;
+        };
 
     }
 

@@ -14,4 +14,10 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
 
     Optional<Product> findBySku(String sku);
 
+    long countByActiveTrue(); // Added in Dashboard module to count total no of active products
+
+    long countBySellerId(Long sellerId);
+
+    long countBySellerIdAndActiveTrue(Long sellerId);
+
 }

@@ -15,11 +15,16 @@ public class CacheConfig {
     @Bean
     public RedisCacheConfiguration redisCacheConfig(ObjectMapper objectMapper){
 
+        GenericJacksonJsonRedisSerializer serializer =
+                GenericJacksonJsonRedisSerializer.builder()
+                        .enableUnsafeDefaultTyping()
+                        .build();
+
         return RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJacksonJsonRedisSerializer(objectMapper)));
+                        .fromSerializer(serializer));
     }
 }

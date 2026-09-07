@@ -3,10 +3,7 @@ package com.akshat.shopsphere.product.service;
 import com.akshat.shopsphere.audit.annotation.Audit;
 import com.akshat.shopsphere.audit.enums.AuditAction;
 import com.akshat.shopsphere.audit.enums.AuditEntityType;
-import com.akshat.shopsphere.product.dto.ProductCreateRequest;
-import com.akshat.shopsphere.product.dto.ProductResponse;
-import com.akshat.shopsphere.product.dto.ProductSearchRequest;
-import com.akshat.shopsphere.product.dto.ProductUpdateRequest;
+import com.akshat.shopsphere.product.dto.*;
 import com.akshat.shopsphere.user.enums.Role;
 import org.springframework.data.domain.Page;
 
@@ -24,6 +21,6 @@ public interface ProductService {
 
     void deleteProduct(Long productId,Long sellerId,Role role) ;
 
-    Page<ProductResponse> searchProducts(ProductSearchRequest request);
+    ProductSearchResponse searchProducts(ProductSearchRequest request);
 
 }

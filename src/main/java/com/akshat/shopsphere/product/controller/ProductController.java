@@ -1,10 +1,7 @@
 package com.akshat.shopsphere.product.controller;
 
 import com.akshat.shopsphere.common.response.ApiResponse;
-import com.akshat.shopsphere.product.dto.ProductCreateRequest;
-import com.akshat.shopsphere.product.dto.ProductResponse;
-import com.akshat.shopsphere.product.dto.ProductSearchRequest;
-import com.akshat.shopsphere.product.dto.ProductUpdateRequest;
+import com.akshat.shopsphere.product.dto.*;
 import com.akshat.shopsphere.product.service.ProductService;
 import com.akshat.shopsphere.security.userdetails.UserDetailsImplementation;
 import com.cloudinary.Api;
@@ -106,11 +103,11 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SELLER','ADMIN','CUSTOMER')")
-    public ResponseEntity<ApiResponse<Page<ProductResponse>>> searchProducts(@Valid ProductSearchRequest request){
+    public ResponseEntity<ApiResponse<ProductSearchResponse>> searchProducts(@Valid ProductSearchRequest request){
 
-        Page<ProductResponse> response = productService.searchProducts(request);
+        ProductSearchResponse response = productService.searchProducts(request);
 
-        ApiResponse<Page<ProductResponse>> apiResponse = new ApiResponse<>(true,
+        ApiResponse<ProductSearchResponse> apiResponse = new ApiResponse<>(true,
                 "Products fetched successfully",
                 response,LocalDateTime.now());
 
