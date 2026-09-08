@@ -3,6 +3,13 @@ spring:
   cache:
     type: redis
 
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          model: gemini-3.6-flash
+
   datasource:
     url: jdbc:postgresql://localhost:5434/shopsphere
     username: ${POSTGRES_USER}
