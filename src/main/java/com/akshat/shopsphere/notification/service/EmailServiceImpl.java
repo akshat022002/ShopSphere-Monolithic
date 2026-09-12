@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,6 +32,7 @@ public class EmailServiceImpl implements EmailService{
 
     }
 
+    @Async
     @Override
     public void sendOrderConfirmationEmail(String to, Long orderId, BigDecimal amount) {
 
@@ -54,6 +56,7 @@ public class EmailServiceImpl implements EmailService{
         sendEmail(to,subject,body);
     }
 
+    @Async
     @Override
     public void sendPaymentSuccessEmail(String to, Long orderId, BigDecimal amount, String razorpayPaymentId) {
 
@@ -78,6 +81,7 @@ public class EmailServiceImpl implements EmailService{
         sendEmail(to,subject,body);
     }
 
+    @Async
     @Override
     public void sendPaymentFailureEmail(String to, Long orderId, BigDecimal amount) {
 
@@ -99,6 +103,7 @@ public class EmailServiceImpl implements EmailService{
         sendEmail(to,subject,body);
     }
 
+    @Async
     @Override
     public void sendOrderCancellationEmail(String to, Long orderId) {
 
@@ -119,6 +124,7 @@ public class EmailServiceImpl implements EmailService{
         sendEmail(to,subject,body);
     }
 
+    @Async
     @Override
     public void sendOrderStatusUpdateEmail(String to, Long orderId, OrderStatus status) {
         String subject = "ShopSphere - Order Status Updated";
