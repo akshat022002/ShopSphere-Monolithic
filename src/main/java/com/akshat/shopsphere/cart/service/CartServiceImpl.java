@@ -92,7 +92,7 @@ public class CartServiceImpl implements CartService{
         Cart cart = getCartForUser(userId);
 
         CartItem cartItem = cartItemRepository
-                .findByCartIdAndProductId(cart.getId(),productId).orElseThrow(()->
+                .findByCartIdAndProductId(cart.getId(), productId).orElseThrow(()->
                         new ResourceNotFoundException("Product is not in your cart"));
 
         cart.getItems().remove(cartItem);

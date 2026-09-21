@@ -28,7 +28,7 @@ public class RazorpayServiceImpl implements RazorpayService{
 
             JSONObject orderRequest = new JSONObject();
 
-            long amountInPaise = amount.multiply(BigDecimal.valueOf(1000)).longValueExact();
+            long amountInPaise = amount.multiply(BigDecimal.valueOf(100)).longValueExact();
 
             orderRequest.put("amount",amountInPaise);
             orderRequest.put("currency","INR");

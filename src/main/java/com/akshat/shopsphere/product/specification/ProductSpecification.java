@@ -1,11 +1,7 @@
 package com.akshat.shopsphere.product.specification;
 
 import com.akshat.shopsphere.product.entity.Product;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;

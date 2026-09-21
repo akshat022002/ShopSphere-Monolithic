@@ -6,7 +6,6 @@ import com.akshat.shopsphere.order.dto.OrderResponse;
 import com.akshat.shopsphere.order.dto.OrderSummaryResponse;
 import com.akshat.shopsphere.order.dto.UpdateOrderStatusRequest;
 import com.akshat.shopsphere.order.service.OrderService;
-import com.akshat.shopsphere.security.userdetails.UserDetailsImplementation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -104,7 +103,7 @@ public class OrderController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PatchMapping("{orderId}/status")
+    @PatchMapping("/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> updateStatus(@RequestBody @Valid UpdateOrderStatusRequest request,
                                                           @PathVariable Long orderId){
