@@ -14,17 +14,10 @@ import java.util.Optional;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment,Long> {
 
-        Optional<Payment> findByOrderId(Long orderId);
 
         Optional<Payment> findByRazorpayOrderId(String razorpayOrderId);
 
-        Optional<Payment> findByRazorpayPaymentId(String razorpayPaymentId);
-
         boolean existsByOrderId(Long orderId);
-
-        boolean existsByRazorpayOrderId(String razorpayOrderId);
-
-        boolean existsByRazorpayPaymentId(String razorpayPaymentId);
 
         @Query("""
                 SELECT COALESCE(SUM(p.amount),0)
