@@ -42,7 +42,6 @@ public class ProductController {
 
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','SELLER','CUSTOMER')")
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable Long productId){
 
@@ -100,7 +99,6 @@ public class ProductController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SELLER','ADMIN','CUSTOMER')")
     public ResponseEntity<ApiResponse<ProductSearchResponse>> searchProducts(@Valid ProductSearchRequest request){
 
         ProductSearchResponse response = productService.searchProducts(request);
